@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+
+
+</head>
+<body>
+
+
+ 
+    
+    
+</body>
+
+
+<script>
+
+
+function initGame(){
+
+    gamex = 10;
+    gamey = 10;
+
+    $('div').remove();
+ 
+    div = document.createElement('div');
+    div.id = "game";
+    document.body.appendChild(div);
+    doc = document.getElementById('game');
+ 
+    mine　= [gamex];
+    for(let y = 0; y < gamey; y++) {
+        mine[y] = new Array(gamex).fill(0);
+    }
+
+    for(var ii= 0 ; ii < gamey ; ii ++){
+        for(var i = 0 ; i < gamex ; i ++){
+            mine[i][ii] = Math.floor(Math.random() * 2);
+        }
+    }
+
+    for(var ii= 0 ; ii < gamey ; ii ++){
+        for(var i = 0 ; i < gamex ; i ++){
+            addButton(i,ii);
+        }
+        addBr();
+    }
+}
+function addButton(x,y){
+
+    btn = document.createElement('button');
+    //btn.textContent = mine[x][y];
+    btn.type = "button";
+    btn.dataset.x = x; //x + y * gamex;
+    btn.dataset.y = y; //x + y * gamex;
+    btn.style = "width:30px; height:30px; background-color:#246; padding:5px;rdr";
+    doc.appendChild(btn);
+    btn.addEventListener('click', opencard );
+
+}
+
+
+function addBr(){
+
+br = document.createElement('br');
+doc.appendChild(br);
+
+}
+
+function opencard(e) {
+    console.log("pushed");
+    const x = Number(e.currentTarget.dataset['x']); 
+    console.log(x);
+    const y = Number(e.currentTarget.dataset['y']); 
+    console.log(y);
+
+    console.log(mine[x][y]);
+
+    if( mine[x][y] != 0){
+        gameover();
+    }
+
+    var count = 0;
+    for( var xx = -1; xx < 2 ; xx++){
+        for( var yy = -1; yy < 2 ; yy++){
+            if( x + xx >= 0 && y + yy >= 0 && x+xx < gamex && y+yy < gamey  ){
+                 count += mine[x+xx][y+yy];
+            }
+        }
+    }
+    console.log("count:"+ count);
+    e.currentTarget.textContent = count;
+}
+
+function gameover(){
+
+    resetButton = document.createElement('button');
+    resetButton.textContent = '新しいゲームを始める';
+    document.body.appendChild(resetButton);
+    resetButton.addEventListener('click', initGame);
+
+}
+
+initGame();
+
+</script>
+
+</html>
