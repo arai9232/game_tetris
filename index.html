@@ -186,6 +186,9 @@ function timeout() {
       place_tetro_on_field();
 
       delete_line_on_field();
+			if( y == -2 ){
+				console.log("Game Over");
+			}
       init_tetro();
     }
 
