@@ -1,3 +1,11 @@
+
+<!-- 
+  テトリス サンプルプログラム 
+  html5 / Canvas + javascript
+-->
+
+
+
 <!DOCTYPE html>
 <html>
   <body>
@@ -5,15 +13,18 @@
     
     <script>
 
-const BLOCK_SIZE = 30;
-const TETRO_SIZE = 4;
-const FIELD_WIDTH = 12;
-const FIELD_HEIGHT = 21;
+<!-- 定数の定義 -->
+const BLOCK_SIZE = 30;  <!-- 正方形ブロックのサイズ -->
+const TETRO_SIZE = 4;    <!-- テトロのサイズは、4x4-->
+const FIELD_WIDTH = 12;  <!-- フィールドの横幅 -->
+const FIELD_HEIGHT = 21; <!-- フィールドの縦幅 -->
 
 var cur_tet_type = 1;
 var cur_tet_col = 1;
 var cur_tet_rot = 1;
 var deleted_line = 0;
+var isGameOver = false;
+
 
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
@@ -47,11 +58,15 @@ draw_tetro();
 update_score();
 update_field();
 
-setInterval( timeout , 1000);
+var timer = setInterval( timeout , 1000);
 
 console.log("game start\n");
 function keydown() {
 
+  if( isGameOver ){
+    location.reload();
+
+  }
   delete_tetro(x,y, "black");
   if( event.keyCode == 39 ){
      if( judge_coll( x + 1 , y, tetro) == 0 ){
@@ -188,6 +203,7 @@ function timeout() {
       delete_line_on_field();
 			if( y == -2 ){
 				console.log("Game Over");
+        game_over();
 			}
       init_tetro();
     }
@@ -195,11 +211,23 @@ function timeout() {
     return;
   }
  delete_tetro(x,y,"black");
+
+
  y=y+1;
  draw_tetro(x,y,"red");
 }
 
+function game_over(){
+  context.fillStyle = "white";
+  context.fillRect( 35,35, 290, 100);
 
+  context.fillStyle = "Black";
+  context.font = "36px serif";
+  context.fillText( "Game Over", 80,80);
+  clearInterval(timer);
+  isGameOver = true;
+
+}
 function init_tetro(){
   x = 4;
   y = -2;
@@ -277,6 +305,8 @@ function init_field(){
   for( let x = 0 ; x < FIELD_WIDTH; x++){
     field[FIELD_HEIGHT-1][x] = 3;
   }
+
+  field[0][1] = field[0][2] = field[0][9] = field[0][10] = 3;
   draw_field();
 }
 
@@ -298,7 +328,7 @@ function place_tetro_on_field(){
 function delete_line_on_field(){
 
   console.log("delete_line_on_field()");
-  for(let y = FIELD_HEIGHT-2 ; y > 0 ; y--)
+  for(let y = FIELD_HEIGHT-2 ; y > 1 ; y--)
   {
     var check_line = 1;
     for( let x = 1 ; x < FIELD_WIDTH-1 ; x++)
@@ -322,24 +352,30 @@ function delete_line( y ){
   for( let l = 1 ; l < FIELD_WIDTH-1 ; l++){
     field[y][l] = 0;
   }
-  for( let yy= y ; yy > 0 ; yy--) {
+  for( let yy= y ; yy > 1 ; yy--) {
     for( let xx = 1 ; xx < FIELD_WIDTH -1 ; xx++){
 
       field[yy][xx] = field[yy-1][xx];
     }
   }
+  <!--
   for( let l = 1 ; l < FIELD_WIDTH-2 ; l++){
     field[0][l] = 0;
   }
+  -->
 
   update_field();
 
 }
 
 function update_score(){
+
+  context.fillStyle = "white";
+  context.fillRect( 360,100, 300, 100);
+
   context.fillStyle = "Black";
-            context.font = "24px serif";
-  context.fillText( "Score :"+String(deleted_line), 360,100);
+  context.font = "24px serif";
+  context.fillText( "Score :"+String(deleted_line), 360,200);
             
 }
 function judge_coll(nx,ny,tet){
